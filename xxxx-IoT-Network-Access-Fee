@@ -1,0 +1,46 @@
+# HIP Template: IoT Network Access Fee
+
+- **Author(s)**: @gradoj
+- **Start Date**: 2024-09-25
+- **Category**: Economic
+- **Original HIP PR**: <!-- leave this empty; maintainer will fill in ID of this pull request -->
+- **Tracking Issue**: <!-- leave this empty; maintainer will create a discussion issue -->
+- **Vote Requirements**: veIOT Holders
+
+## Summary
+
+This HIP proposes introducing an onboarding or network access fee for IoT sensors that send join requests to the Helium Network. This fee targets sensors with very low data usage that consume minimal Data Credits (DC). The goal is to address the economic inefficiency caused by these low-data usage sensors and ensure they contribute to the network's sustainability.
+
+## Motivation
+
+The current Helium Network model does not account for very low data usage sensors that only send small amounts of packet data or consume minimal Data Credits (DC). These devices currently do not contribute significantly to the network's overall revenue. This proposal supports the use case of ensuring all devices, regardless of their data usage, contribute fairly to the network's maintenance and sustainability. By addressing the economic inefficiency caused by low-data usage sensors, the expected outcome is a more balanced economic model where all devices contribute to the network, ensuring its long-term sustainability.
+
+## Stakeholders
+
+The stakeholders affected by this HIP include IoT sensor manufacturers, network operators, Helium Community members (e.g., Hotspot hosts, token holders), and low-data usage device users. Feedback from these stakeholders will be solicited through community forums (e.g., Discord, Reddit), social media channels, email newsletters, and direct outreach to IoT sensor manufacturers and network operators.
+
+## Detailed Explanation
+
+All sensors that send a LoRaWAN join request will require payment of the onboarding fee. This fee targets low-data usage sensors that transmit very few packets using minimal Data Credits (DC). Sensors will send a join request with their unique deveui, which will be used to check if they've paid the onboarding fee. A Bloom filter will be used as an efficient, anonymous way to keep track of which sensors have paid the onboarding fees. If a sensor is not found in the Bloom filter, its join request will be dropped by the Helium Packet Router (HPR). This method will not apply to ABP sensors since they do not send join request packets.
+
+For example, a sensor sends a join request with its deveui. The HPR checks the Bloom filter to see if the deveui is present. If it is, the join request is processed. If not, the request is dropped. Potential corner cases include devices that occasionally burst above the low-data usage threshold and devices that are unable to pay the onboarding fee due to technical limitations.
+
+## Drawbacks
+
+The onboarding fee may increase the cost for manufacturers and users of low-data usage sensors. Additionally, the additional cost could deter some users from adopting the network, potentially slowing growth.
+
+## Rationale and Alternatives
+
+This design ensures that all devices contribute to the network's sustainability, addressing the economic inefficiency caused by low-data usage sensors. Other designs, such as increasing data credit costs or implementing a different fee structure, were considered but deemed less effective in targeting the specific issue of low-data usage sensors. Without this HIP, low-data usage sensors will continue to access the network without contributing significantly to its maintenance, leading to economic inefficiency.
+
+## Unresolved Questions
+
+The exact fee structure and amount, as well as the implementation details of the Bloom filter, are expected to be resolved through the HIP process before this gets merged. The technical integration with the Helium Packet Router (HPR) will be resolved through the implementation of this feature. Potential future adjustments to the fee structure based on network usage patterns are considered out of scope for this HIP and could be addressed independently in the future. Coordination with network operators and sensor manufacturers for implementation is necessary for this HIP to succeed.
+
+## Deployment Impact
+
+Current users with existing devices will not be affected, as the fee applies only to new devices sending join requests. Documentation will need to be updated to reflect the new onboarding fee requirements and the process for paying the fee. This HIP is backwards compatible as it only affects new devices. It can be undone by removing the fee requirement and updating the Bloom filter accordingly.
+
+## Success Metrics
+
+The success of this design can be measured by an increase in network revenue from onboarding fees, a reduction in the number of low-data usage sensors accessing the network without contributing, and positive feedback from stakeholders on the fairness and effectiveness of the fee.
