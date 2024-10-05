@@ -1,0 +1,68 @@
+# HIP XXX: Know Your Sensor Manufacturer
+
+- **Author(s):** @gradoj
+- **Start Date:** Oct 4, 2024
+- **Category:** iot
+- **Original HIP PR:** [Insert Pull Request Link]
+- **Tracking Issue:** [Insert Issue Link]
+- **Vote Requirements:** [Insert Voting Requirements]
+
+## Summary
+
+This proposal addresses the issue of untrusted or unverified hotspots and gateways on the Helium IoT Network. The goal is to implement a system where verified sensors from known manufacturers are used to prove the coverage of these hotspots. By ensuring the sensors themselves are verified and trusted, the Helium network will be able to more accurately validate hotspot coverage, improving the network’s reliability and trustworthiness.
+
+## Motivation
+
+The Helium network is expanding rapidly, but there is a growing issue with gaming, where some hotspot owners deploy clusters of hotspots that do not pass data, lack antennas, or are improperly set up. This gaming undermines the network’s integrity and makes it difficult to trust coverage claims. Due to the limitations of the network’s current architecture, it is challenging to detect and prevent these types of setups. The network does not have built-in mechanisms to verify that hotspots are functioning as intended, and as a result, untrusted hotspots can still claim coverage without being validated.
+
+By introducing the "Know Your Sensor Manufacturer" (KYSM) system, we can mitigate this issue by using verified sensors to prove the coverage of these hotspots. Verified sensor usage will provide a reliable way to confirm that hotspots are actually performing the functions they are intended for, rather than being part of a cluster used to exploit the system. This allows the network to work around its architectural limitations and introduce a layer of validation.
+
+Additionally, the KYSM system offers a secondary benefit: it can help bootstrap sensor usage and increase Data Credit burn on the network. Since the IoT subnetwork rewards are based on Data Credit usage, this system provides a way to supplement sensor activity by using verified sensors as mappers. Gateways that pass data from these sensors can receive higher rewards compared to those interacting with unverified sensors, helping to ensure that the network rewards legitimate data transfer.
+
+## Drawbacks
+
+One of the challenges with the "Know Your Sensor Manufacturer" (KYSM) system is that the process of selecting and verifying sensors may take time. While the community already trusts certain manufacturers, like RAP Wireless and SEED, they would need to contribute sensors that meet defined minimum capabilities and standardized protocols. These minimum requirements will include basic functioning abilities, and the message structure would need to be uniform across all verified sensors.
+
+Additionally, there is significant complexity in managing the KYSM system. Someone will need to run the dedicated LoRaWAN Network Server (LNS) and ensure that the system is operating smoothly. Writing oracles or code to ingest mapper data and validate it, while also tracking all the relevant information from hotspots transmitting this data, is a non-trivial task. The implementation of a different NetID to manage sensor data traffic and adjust Data Credit usage introduces further complexity. These technical and operational hurdles could slow down implementation or create ongoing maintenance challenges.
+
+Another risk lies in whether enough people will actually buy and use the verified sensors. While hotspot owners are expected to operate normally, there may be insufficient demand for the sensors themselves. To address this, the Helium Foundation or operational funds can supplement Data Credit usage for these sensors. By offering free or reduced Data Credits, sensor manufacturers and distributors will be incentivized to promote these sensors to customers, adding value and encouraging adoption.
+
+Historically, gaming and farming Data Credit usage were issues on the Helium Network when hotspot owners received more than a one-time Data Credit for transferring data. This led to exploitation, but the KYSM system mitigates this risk by leveraging trusted sensor manufacturers. Since the end user purchases the sensor with real money, there is no gaming vector; they have already paid for the hardware. Additionally, since we trust the manufacturers, we can offer greater than one-time Data Credit usage to hotspot operators without fear of manipulation.
+
+## Rationale and Alternatives
+
+The "Know Your Sensor Manufacturer" (KYSM) system is the most effective solution for addressing the issue of untrusted hotspots on the Helium network. By using verified sensors to prove hotspot coverage, the network can ensure that data is being passed through functioning and reliable devices. This system leverages the trust in sensor manufacturers, allowing for greater flexibility in Data Credit (DC) usage without the risk of gaming or exploitation.
+
+One alternative that was considered involves increasing the minimum amount of Data Credits consumed when a packet is sent. For example, setting a minimum of 10 DC per packet, spread across multiple hotspots, would ensure that each transmission contributes more meaningfully to network rewards. However, this approach does not solve the core issue of verifying hotspot coverage. While increasing DC usage could help the economic model, it doesn’t provide a mechanism for ensuring that hotspots are actually performing their intended function.
+
+Another option was the use of secure mappers, where GPS and hardware are secured through encapsulation and other methods to prevent data modification. Concerns about gaming incentives led to work being done to secure mapper hardware. However, with the KYSM system, this level of hardware security is unnecessary, as mappers are not rewarded outright. Instead, the system focuses on validating sensor activity and hotspot performance through trusted sensor manufacturers, bypassing the need for highly secure mapper hardware.
+
+Additionally, there is the option to purchase data from third-party systems such as DEMO, DIMO, or other sensor users. This would involve sourcing external data to verify hotspot coverage rather than relying on the network’s own sensor infrastructure. While this approach could work in some cases, it introduces dependency on external parties and may not offer the same level of control or consistency as a system like KYSM, where the network has direct oversight of sensor data and performance.
+
+Another alternative would be to update the proof-of-coverage algorithm by randomizing spreading factors and other RF parameters, such as transmit power. This would allow the network to gather a deeper understanding of hotspot capability and coverage without needing to introduce verified sensors. While this could improve coverage verification, it lacks the direct validation of hotspot functionality that the KYSM system offers through trusted sensor manufacturers.
+
+Finally, the option to do nothing and continue with the network as it currently stands was considered. In this scenario, there would be no mapping capability or verified sensors, meaning the network would continue to face issues with untrusted hotspots and unverified coverage. While this approach avoids any immediate complexity, it fails to address the long-term problem of ensuring reliable network coverage and data integrity.
+
+In contrast, the KYSM system directly addresses the problem by using verified sensors to validate the coverage provided by hotspots. This method not only increases DC usage through sensor activity but also ensures that rewards are given based on legitimate data transfer.
+
+## Detailed Explanation
+
+The "Know Your Sensor Manufacturer" (KYSM) system aims to enhance the Helium network by using verified sensors to prove the coverage of hotspots and gateways. The system works by establishing a trusted relationship with sensor manufacturers who are known and respected within the community. These manufacturers, such as RAP Wireless and SEED, would contribute sensors that meet specific minimum capabilities, including standardized message structures and protocols.
+
+### Key Components of KYSM:
+
+1. **Verified Sensors:** Only sensors from trusted manufacturers will be used in this system. These sensors will undergo a verification process to ensure they meet the necessary functional requirements and adhere to a standardized message protocol. By ensuring all sensors are legitimate, the KYSM system can validate hotspot coverage with confidence.
+
+2. **Dedicated LNS and NetID:** The KYSM system will group all verified sensors into a dedicated LoRaWAN Network Server (LNS) and, potentially, a separate NetID. This setup allows for better control over Data Credit (DC) usage and ensures that only verified sensors are interacting with the network. The separate address space or NetID gives flexibility to incentivize hotspot operators with more than one-time DC rewards without introducing a gaming vector.
+
+3. **Data Credit Supplementation and Super Data Credit Packets:** To encourage the adoption of verified sensors, the Helium Foundation or operational funds may supplement the DC usage for these sensors. In particular, hotspots that pass data from these verified sensors could earn significantly higher rewards through the introduction of "super Data Credit packets." For example, a hotspot could earn up to 100 times the regular DC rewards for transmitting data from verified sensors. This not only incentivizes hotspot operators to prioritize verified sensors, but also boosts the overall adoption and activity of trusted sensor data on the network.
+
+4. **Oracles and Data Validation:** The KYSM system will rely on oracles or other mechanisms to ingest and validate the mapper data collected from verified sensors. This data will then be processed to ensure that hotspots passing the data are indeed performing their intended function. The KYSM system reduces the risk of gaming by ensuring that the hardware used is purchased with real money, meaning there is no incentive to manipulate the data for rewards.
+
+### Future Use Case for POC Rewards
+
+In the future, if the KYSM system is used for Proof of Coverage (POC) rewards, there could be a potential incentive for users to attempt to modify the data to validate their own hotspots and continue earning rewards. For instance, a user could deploy a verified sensor and attempt to manipulate the data to falsely confirm that their hotspot is providing legitimate coverage, even if it is not.
+
+However, the KYSM system is designed to mitigate this risk through the use of trusted sensors and validation mechanisms. By ensuring that only verified sensors from trusted manufacturers are used, and by carefully monitoring the data for anomalies through oracles or similar systems, the network can reduce the likelihood of data manipulation. Additionally, the fact that these sensors are purchased by the end user with real money adds a layer of protection, as users would need to invest in legitimate hardware before they could even attempt such manipulation.
+
+This example highlights how the KYSM system is flexible enough to be adapted for future use cases
